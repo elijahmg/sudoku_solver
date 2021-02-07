@@ -1,9 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
 import cx from 'classnames';
 
-import './Grid.scss';
+import Button from '../Button/Button';
 import { sudoku as defaultS } from './util';
 import Solver from '../../utils/solver';
+
+import './Grid.scss';
 
 type Coordinates = [number, number] | null;
 
@@ -11,7 +13,7 @@ type Coordinates = [number, number] | null;
  * @TODO force user to fill up
  * 1. Checker is sudoku is solvable
  * 2. Message in the end, sudoku is solved
- * 3. Take out button
+ * 3. Take out button (done)
  * 4. TESTS!
  * 5. Improve functions in class with lodash
  *
@@ -53,7 +55,7 @@ const Grid: FC = () => {
 
   return (
     <div>
-      <div className="wrapper">
+      <div className="game-wrapper">
         <table className="game-table">
           <tbody>
             {sudoku.map((row, i) => (
@@ -77,7 +79,9 @@ const Grid: FC = () => {
           </tbody>
         </table>
       </div>
-      <button onClick={solve}>Solve this bitch</button>
+      <Button className="margin-top" onClick={solve}>
+        Solve sudoku
+      </Button>
     </div>
   );
 };
