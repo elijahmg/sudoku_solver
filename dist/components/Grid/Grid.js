@@ -1,8 +1,9 @@
 import React, {useState} from "../../../_snowpack/pkg/react.js";
 import cx from "../../../_snowpack/pkg/classnames.js";
-import "./Grid.css.proxy.js";
+import Button from "../Button/Button.js";
 import {sudoku as defaultS} from "./util.js";
 import Solver from "../../utils/solver.js";
+import "./Grid.css.proxy.js";
 const Grid = () => {
   const [sudoku, setSudoku] = useState(defaultS);
   const [selected, setSelected] = useState(null);
@@ -31,7 +32,7 @@ const Grid = () => {
     setSelected(newCoord);
   };
   return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", {
-    className: "wrapper"
+    className: "game-wrapper"
   }, /* @__PURE__ */ React.createElement("table", {
     className: "game-table"
   }, /* @__PURE__ */ React.createElement("tbody", null, sudoku.map((row, i) => /* @__PURE__ */ React.createElement("tr", {
@@ -48,8 +49,9 @@ const Grid = () => {
     onKeyDown: keyListener
   }, /* @__PURE__ */ React.createElement("div", {
     className: "cell-value"
-  }, num || "")))))))), /* @__PURE__ */ React.createElement("button", {
+  }, num || "")))))))), /* @__PURE__ */ React.createElement(Button, {
+    className: "margin-top",
     onClick: solve
-  }, "Solve this bitch"));
+  }, "Solve sudoku"));
 };
 export default Grid;
