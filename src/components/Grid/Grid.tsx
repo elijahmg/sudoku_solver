@@ -11,7 +11,7 @@ type Coordinates = [number, number] | null;
 
 /**
  * @TODO force user to fill up
- * 1. Checker is sudoku is solvable
+ * 1. Checker is sudoku is solvable (done)
  * 2. Message in the end, sudoku is solved
  * 3. Take out button (done)
  * 4. TESTS!
@@ -43,9 +43,12 @@ const Grid: FC = () => {
     return false;
   };
 
-  const solve = () => {
+  const solve = async () => {
     const solver = new Solver(sudoku);
-    solver.solve([0, 0], setSudoku);
+    const isValid = solver.isValidSudoku();
+    const isSolved = await solver.solve([0, 0], setSudoku);
+    console.log({ isSolved });
+    console.log({ isValid });
   };
 
   const onClick = (coord: Exclude<Coordinates, null>) => {

@@ -12,12 +12,12 @@ class Solver {
     this.sudoku = sudoku;
   }
 
-  private zeroFilter(values: Array<number>) {
+  private static zeroFilter(values: Array<number>) {
     return values.filter((el) => el !== 0);
   }
 
   private getRowValues(rowIndex: number) {
-    return this.zeroFilter(this.sudoku[rowIndex]);
+    return Solver.zeroFilter(this.sudoku[rowIndex]);
   }
 
   private getColumnValues(columnIndex: number) {
@@ -27,11 +27,11 @@ class Solver {
       columnValues.push(row[columnIndex]);
     });
 
-    return this.zeroFilter(columnValues);
+    return Solver.zeroFilter(columnValues);
   }
 
   private getSubgridValues(indexes: Array<number>) {
-    const [rowIndex, columnIndex] = this.findStartIndexes(indexes);
+    const [rowIndex, columnIndex] = Solver.findStartIndexes(indexes);
     const subgridValues: Array<number> = [];
 
     for (let i = rowIndex; i < rowIndex + 3; i++) {
@@ -40,10 +40,10 @@ class Solver {
       }
     }
 
-    return this.zeroFilter(subgridValues);
+    return Solver.zeroFilter(subgridValues);
   }
 
-  private findStartIndexes(indexes: Array<number>) {
+  private static findStartIndexes(indexes: Array<number>) {
     return [indexes[0] - (indexes[0] % 3), indexes[1] - (indexes[1] % 3)];
   }
 
@@ -146,6 +146,35 @@ class Solver {
 
     this.sudoku = copySud;
     callback(copySud);
+  }
+
+  /**
+   * Check for row, column and subgrid, if value in a cell is uniq
+   * @param values
+   * @param el
+   * @private
+   */
+  private static uniqCellValues(values: Array<Array<number>>, el: number) {
+    return values.map((row) => row.filter((v) => v === el));
+  }
+
+  isValidSudoku(): boolean {
+    for (let i = 0; i < this.sudoku.length; i++) {
+      for (let j = 0; j < this.sudoku[i].length; j++) {
+        const el = this.sudoku[i][j];
+        if (el !== 0) {
+          const allValues = this.getAllValues([i, j]);
+
+          const uniqCellValues = Solver.uniqCellValues(allValues, el);
+
+          if (uniqCellValues.some((row) => row.length !== 1)) {
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
   }
 }
 
