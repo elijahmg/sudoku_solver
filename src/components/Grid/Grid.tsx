@@ -6,6 +6,7 @@ import { sudoku as defaultS } from './util';
 import Solver from '../../utils/solver';
 
 import './Grid.scss';
+import Slider from '../Slider/Slider';
 
 type Coordinates = [number, number] | null;
 
@@ -85,6 +86,7 @@ const Grid: FC = () => {
       <Button className="margin-top" onClick={solve}>
         Solve sudoku
       </Button>
+      <Slider/>
     </div>
   );
 };

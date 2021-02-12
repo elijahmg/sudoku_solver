@@ -14,4 +14,9 @@ button {
     background-color: rgba(#344861, 0.3);
     transform: translateY(2px);
   }
+
+  &:hover {
+    background-color: rgba(#344861, 0.8);
+    color: whitesmoke;
+  }
 }
