@@ -4,6 +4,7 @@ import Button from "../Button/Button.js";
 import {sudoku as defaultS} from "./util.js";
 import Solver from "../../utils/solver.js";
 import "./Grid.css.proxy.js";
+import Slider from "../Slider/Slider.js";
 const Grid = () => {
   const [sudoku, setSudoku] = useState(defaultS);
   const [selected, setSelected] = useState(null);
@@ -23,9 +24,12 @@ const Grid = () => {
     }
     return false;
   };
-  const solve = () => {
+  const solve = async () => {
     const solver = new Solver(sudoku);
-    solver.solve([0, 0], setSudoku);
+    const isValid = solver.isValidSudoku();
+    const isSolved = await solver.solve([0, 0], setSudoku);
+    console.log({isSolved});
+    console.log({isValid});
   };
   const onClick = (coord) => {
     const newCoord = isIntersection(coord) ? null : coord;
@@ -52,6 +56,6 @@ const Grid = () => {
   }, num || "")))))))), /* @__PURE__ */ React.createElement(Button, {
     className: "margin-top",
     onClick: solve
-  }, "Solve sudoku"));
+  }, "Solve sudoku"), /* @__PURE__ */ React.createElement(Slider, null));
 };
 export default Grid;

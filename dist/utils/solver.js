@@ -8,30 +8,30 @@ class Solver {
     this.sudoku = [[]];
     this.sudoku = sudoku;
   }
-  zeroFilter(values) {
+  static zeroFilter(values) {
     return values.filter((el) => el !== 0);
   }
   getRowValues(rowIndex) {
-    return this.zeroFilter(this.sudoku[rowIndex]);
+    return Solver.zeroFilter(this.sudoku[rowIndex]);
   }
   getColumnValues(columnIndex) {
     const columnValues = [];
     this.sudoku.forEach((row) => {
       columnValues.push(row[columnIndex]);
     });
-    return this.zeroFilter(columnValues);
+    return Solver.zeroFilter(columnValues);
   }
   getSubgridValues(indexes) {
-    const [rowIndex, columnIndex] = this.findStartIndexes(indexes);
+    const [rowIndex, columnIndex] = Solver.findStartIndexes(indexes);
     const subgridValues = [];
     for (let i = rowIndex; i < rowIndex + 3; i++) {
       for (let j = columnIndex; j < columnIndex + 3; j++) {
         subgridValues.push(this.sudoku[i][j]);
       }
     }
-    return this.zeroFilter(subgridValues);
+    return Solver.zeroFilter(subgridValues);
   }
-  findStartIndexes(indexes) {
+  static findStartIndexes(indexes) {
     return [indexes[0] - indexes[0] % 3, indexes[1] - indexes[1] % 3];
   }
   getAllValues(indexes) {
@@ -88,6 +88,24 @@ class Solver {
     copySud[rowIndex][columnIndex] = num;
     this.sudoku = copySud;
     callback(copySud);
+  }
+  static uniqCellValues(values, el) {
+    return values.map((row) => row.filter((v) => v === el));
+  }
+  isValidSudoku() {
+    for (let i = 0; i < this.sudoku.length; i++) {
+      for (let j = 0; j < this.sudoku[i].length; j++) {
+        const el = this.sudoku[i][j];
+        if (el !== 0) {
+          const allValues = this.getAllValues([i, j]);
+          const uniqCellValues = Solver.uniqCellValues(allValues, el);
+          if (uniqCellValues.some((row) => row.length !== 1)) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
   }
 }
 export default Solver;
