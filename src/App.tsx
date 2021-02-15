@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Grid from './components/Grid/Grid';
+import Button from './components/Button/Button';
 
 import styles from './App.module.scss';
 

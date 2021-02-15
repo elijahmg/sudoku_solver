@@ -4,6 +4,21 @@
 
 .flex {
   display: flex;
+
+  .possibleValues {
+    font-size: 2rem;
+    margin-left: 4rem;
+    align-self: center;
+
+    span {
+      display: block;
+      margin-bottom: 2rem;
+    }
+
+    .input {
+      margin-bottom: 2rem;
+    }
+  }
 }
 
 .gameWrapper {

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import cx from 'classnames';
 
 import Button from '../Button/Button';
@@ -6,7 +6,7 @@ import { sudoku as defaultS } from './util';
 import Solver from '../../utils/solver';
 
 import styles from './Grid.module.scss';
-import Slider from '../Slider/Slider';
+import Input from '../Input/Input';
 
 type Coordinates = [number, number] | null;
 
@@ -20,10 +20,15 @@ type Coordinates = [number, number] | null;
  *
  * **/
 
-const Grid: FC = () => {
-  const [sudoku, setSudoku] = useState<Array<Array<number>>>(defaultS);
+interface Props {
+  sudoku?: Array<Array<number>>;
+}
+
+const Grid: FC<Props> = ({ sudoku: propSudoku = defaultS }) => {
+  const [sudoku, setSudoku] = useState<Array<Array<number>>>(propSudoku);
   const [selected, setSelected] = useState<Array<number> | null>();
   const [possibleValues, setPossibleValues] = useState<Array<number>>();
+  const [delay, setDelay] = useState<number>(0);
 
   const keyListener = (e: React.KeyboardEvent<HTMLTableDataCellElement>) => {
     const keyAsNumber = Number(e.key);
@@ -46,10 +51,16 @@ const Grid: FC = () => {
   };
 
   const solve = async () => {
-    const solver = new Solver(sudoku);
+    const solver = new Solver(sudoku, delay);
     await solver.solve([0, 0], setSudoku, setPossibleValues, setSelected);
     setSelected(null);
   };
+
+  const onReset = () => {
+    setSudoku(propSudoku);
+    setSelected(null);
+    setPossibleValues(undefined);
+  }
 
   const onClick = (coord: Exclude<Coordinates, null>) => {
     const newCoord = isIntersection(coord) ? null : coord;
@@ -61,43 +72,37 @@ const Grid: FC = () => {
       <div className={styles.gameWrapper}>
         <table className={styles.gameTable}>
           <tbody>
-            {sudoku.map((row, i) => (
-              <tr className={styles.row} key={i}>
-                {row.map((num, j) => (
-                  <td
-                    className={cx(styles.cell, {
-                      selected: isIntersection([i, j]),
-                      isNew: defaultS[i][j] === 0,
-                    })}
-                    key={j}
-                    onClick={() => onClick([i, j])}
-                    tabIndex={0}
-                    onKeyDown={keyListener}
-                  >
-                    <div>{num || ''}</div>
-                  </td>
-                ))}
-              </tr>
-            ))}
+          {sudoku.map((row, i) => (
+            <tr className={styles.row} key={i}>
+              {row.map((num, j) => (
+                <td
+                  className={cx(styles.cell, {
+                    [styles.selected]: isIntersection([i, j]),
+                    [styles.isNew]: defaultS[i][j] === 0,
+                  })}
+                  key={j}
+                  onClick={() => onClick([i, j])}
+                  tabIndex={0}
+                  onKeyDown={keyListener}
+                >
+                  <div>{num || ''}</div>
+                </td>
+              ))}
+            </tr>
+          ))}
           </tbody>
         </table>
       </div>
-      <div
-        style={{
-          marginLeft: '2rem',
-        }}
-      >
-        <div
-          style={{
-            fontSize: '24px',
-            marginTop: '10rem',
-          }}
-        >
-          Possible values: {possibleValues?.toString()}
-        </div>
-        <Button className="margin-top" onClick={solve}>
-          Solve sudoku
-        </Button>
+      <div className={styles.possibleValues}>
+        <span>Possible values: [{possibleValues?.join(', ')}]</span>
+        <Input
+          onChange={(value) => setDelay(Number(value))}
+          value={delay}
+          className={styles.input}
+          type='number'
+        >Delay, ms</Input>
+        <Button onClick={solve}>Solve sudoku</Button>
+        <Button onClick={onReset}>Reset</Button>
       </div>
     </div>
   );

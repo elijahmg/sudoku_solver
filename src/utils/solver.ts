@@ -7,9 +7,11 @@ function sleep(ms: number) {
 class Solver {
   private possibleVars = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   private sudoku: Array<Array<number>> = [[]];
+  private delay = 0;
 
-  constructor(sudoku: Array<Array<number>>) {
+  constructor(sudoku: Array<Array<number>>, delay: number) {
     this.sudoku = sudoku;
+    this.delay = delay;
   }
 
   private static zeroFilter(values: Array<number>) {
@@ -97,7 +99,7 @@ class Solver {
     setSelected: (arr: Array<number>) => void,
   ): Promise<boolean> {
     // @TODO make sleep configurable
-    await sleep(200);
+    await sleep(this.delay);
     let [rowIndex, columnIndex] = indexes;
 
     if (rowIndex === 8 && columnIndex === 9) return true;
