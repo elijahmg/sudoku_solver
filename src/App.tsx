@@ -2,13 +2,13 @@ import React from 'react';
 
 import Grid from './components/Grid/Grid';
 
-import './App.scss';
+import styles from './App.module.scss';
 
 interface AppProps {}
 
 function App({}: AppProps) {
   return (
-    <div className="App">
+    <div className={styles.App}>
       <Grid />
     </div>
   );

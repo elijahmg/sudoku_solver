@@ -2,14 +2,18 @@
   margin-top: 2rem;
 }
 
-.game-wrapper {
+.flex {
+  display: flex;
+}
+
+.gameWrapper {
   width: 500px;
   height: 500px;
   background-color: #f3f6fa;
   position: relative;
   margin-top: 3rem;
 
-  .game-table {
+  .gameTable {
     background: #fff;
     user-select: none;
     border: 2px solid #344861;

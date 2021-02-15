@@ -93,9 +93,11 @@ class Solver {
   async solve(
     indexes: Array<number>,
     callback: (arr: Array<Array<number>>) => void,
+    setValues: (arr: Array<number>) => void,
+    setSelected: (arr: Array<number>) => void,
   ): Promise<boolean> {
     // @TODO make sleep configurable
-    // await sleep(10);
+    await sleep(200);
     let [rowIndex, columnIndex] = indexes;
 
     if (rowIndex === 8 && columnIndex === 9) return true;
@@ -104,12 +106,19 @@ class Solver {
       rowIndex = rowIndex + 1;
       columnIndex = 0;
     }
+    setSelected([rowIndex, columnIndex]);
 
     if (this.sudoku[rowIndex][columnIndex] !== 0) {
-      return await this.solve([rowIndex, columnIndex + 1], callback);
+      return await this.solve(
+        [rowIndex, columnIndex + 1],
+        callback,
+        setValues,
+        setSelected,
+      );
     }
 
     const uniqValues = this.findPossibleValuesToSet([rowIndex, columnIndex]);
+    setValues(uniqValues);
 
     if (uniqValues.length === 0) return false;
 
@@ -117,7 +126,14 @@ class Solver {
       if (this.isSafeToSet([rowIndex, columnIndex], uniqValue)) {
         this.update([rowIndex, columnIndex], callback, uniqValue);
 
-        if (await this.solve([rowIndex, columnIndex + 1], callback)) {
+        if (
+          await this.solve(
+            [rowIndex, columnIndex + 1],
+            callback,
+            setValues,
+            setSelected,
+          )
+        ) {
           return true;
         }
       }

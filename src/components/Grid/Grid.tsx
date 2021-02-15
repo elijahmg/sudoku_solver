@@ -5,7 +5,7 @@ import Button from '../Button/Button';
 import { sudoku as defaultS } from './util';
 import Solver from '../../utils/solver';
 
-import './Grid.scss';
+import styles from './Grid.module.scss';
 import Slider from '../Slider/Slider';
 
 type Coordinates = [number, number] | null;
@@ -22,7 +22,8 @@ type Coordinates = [number, number] | null;
 
 const Grid: FC = () => {
   const [sudoku, setSudoku] = useState<Array<Array<number>>>(defaultS);
-  const [selected, setSelected] = useState<Coordinates>(null);
+  const [selected, setSelected] = useState<Array<number> | null>();
+  const [possibleValues, setPossibleValues] = useState<Array<number>>();
 
   const keyListener = (e: React.KeyboardEvent<HTMLTableDataCellElement>) => {
     const keyAsNumber = Number(e.key);
@@ -46,27 +47,25 @@ const Grid: FC = () => {
 
   const solve = async () => {
     const solver = new Solver(sudoku);
-    const isValid = solver.isValidSudoku();
-    const isSolved = await solver.solve([0, 0], setSudoku);
-    console.log({ isSolved });
-    console.log({ isValid });
+    await solver.solve([0, 0], setSudoku, setPossibleValues, setSelected);
+    setSelected(null);
   };
 
   const onClick = (coord: Exclude<Coordinates, null>) => {
     const newCoord = isIntersection(coord) ? null : coord;
-    setSelected(newCoord);
+    // setSelected(newCoord);
   };
 
   return (
-    <div>
-      <div className="game-wrapper">
-        <table className="game-table">
+    <div className={styles.flex}>
+      <div className={styles.gameWrapper}>
+        <table className={styles.gameTable}>
           <tbody>
             {sudoku.map((row, i) => (
-              <tr className="row" key={i}>
+              <tr className={styles.row} key={i}>
                 {row.map((num, j) => (
                   <td
-                    className={cx('cell', {
+                    className={cx(styles.cell, {
                       selected: isIntersection([i, j]),
                       isNew: defaultS[i][j] === 0,
                     })}
@@ -75,7 +74,7 @@ const Grid: FC = () => {
                     tabIndex={0}
                     onKeyDown={keyListener}
                   >
-                    <div className="cell-value">{num || ''}</div>
+                    <div>{num || ''}</div>
                   </td>
                 ))}
               </tr>
@@ -83,10 +82,23 @@ const Grid: FC = () => {
           </tbody>
         </table>
       </div>
-      <Button className="margin-top" onClick={solve}>
-        Solve sudoku
-      </Button>
-      <Slider/>
+      <div
+        style={{
+          marginLeft: '2rem',
+        }}
+      >
+        <div
+          style={{
+            fontSize: '24px',
+            marginTop: '10rem',
+          }}
+        >
+          Possible values: {possibleValues?.toString()}
+        </div>
+        <Button className="margin-top" onClick={solve}>
+          Solve sudoku
+        </Button>
+      </div>
     </div>
   );
 };
