@@ -5,6 +5,7 @@ import './common/_commonjsHelpers-eb5a497e.js';
 
 
 var useEffect = react.useEffect;
+var useReducer = react.useReducer;
 var useRef = react.useRef;
 var useState = react.useState;
-export { useEffect, useRef, useState };
+export { useEffect, useReducer, useRef, useState };

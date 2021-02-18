@@ -1,12 +1,15 @@
 import {intersection} from "../../_snowpack/pkg/lodash.js";
+import {ActionType} from "../components/Grid/state.js";
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 class Solver {
-  constructor(sudoku) {
+  constructor(sudoku, delay) {
     this.possibleVars = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     this.sudoku = [[]];
+    this.delay = 0;
     this.sudoku = sudoku;
+    this.delay = delay;
   }
   static zeroFilter(values) {
     return values.filter((el) => el !== 0);
@@ -58,6 +61,7 @@ class Solver {
     return intersection(uniqToRow, uniqToColumn, uniqToSubgrid);
   }
   async solve(indexes, callback) {
+    await sleep(this.delay);
     let [rowIndex, columnIndex] = indexes;
     if (rowIndex === 8 && columnIndex === 9)
       return true;
@@ -65,10 +69,12 @@ class Solver {
       rowIndex = rowIndex + 1;
       columnIndex = 0;
     }
+    callback({type: ActionType.SET_SELECTED, value: [rowIndex, columnIndex]});
     if (this.sudoku[rowIndex][columnIndex] !== 0) {
       return await this.solve([rowIndex, columnIndex + 1], callback);
     }
     const uniqValues = this.findPossibleValuesToSet([rowIndex, columnIndex]);
+    callback({type: ActionType.SET_POSSIBLE_VALUES, value: uniqValues});
     if (uniqValues.length === 0)
       return false;
     for (const uniqValue of uniqValues) {
@@ -87,7 +93,7 @@ class Solver {
     const [rowIndex, columnIndex] = indexes;
     copySud[rowIndex][columnIndex] = num;
     this.sudoku = copySud;
-    callback(copySud);
+    callback({type: ActionType.SET_SUDOKU, value: copySud});
   }
   static uniqCellValues(values, el) {
     return values.map((row) => row.filter((v) => v === el));

@@ -1,0 +1,14 @@
+
+export let code = "._margin-top_1luie_1 {\n  margin-top: 2rem;\n}\n\n._flex_1luie_5 {\n  display: flex;\n}\n._flex_1luie_5 ._possibleValues_1luie_8 {\n  font-size: 2rem;\n  margin-left: 4rem;\n  align-self: flex-end;\n}\n._flex_1luie_5 ._possibleValues_1luie_8 span {\n  display: block;\n  margin-bottom: 2rem;\n}\n._flex_1luie_5 ._possibleValues_1luie_8 ._input_1luie_17 {\n  margin-bottom: 2rem;\n}\n._flex_1luie_5 ._possibleValues_1luie_8 ._buttonGroup_1luie_20 {\n  display: flex;\n  flex-direction: column;\n}\n._flex_1luie_5 ._possibleValues_1luie_8 ._buttonGroup_1luie_20 > :not(:first-child) {\n  margin-top: 2rem;\n}\n\n._gameWrapper_1luie_28 {\n  width: 500px;\n  height: 500px;\n  background-color: #f3f6fa;\n  position: relative;\n  margin-top: 3rem;\n}\n._gameWrapper_1luie_28 ._gameTable_1luie_35 {\n  background: #fff;\n  user-select: none;\n  border: 2px solid #344861;\n  font-size: 3rem;\n  display: block;\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n}\n._gameWrapper_1luie_28 ._gameTable_1luie_35 tbody {\n  overflow: hidden;\n  height: 100%;\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n._gameWrapper_1luie_28 ._gameTable_1luie_35 ._row_1luie_54 {\n  display: flex;\n  padding: 0;\n  margin: 0;\n  height: 11.11111%;\n}\n._gameWrapper_1luie_28 ._gameTable_1luie_35 ._row_1luie_54:nth-child(3n) {\n  border-bottom: 2px solid #344861;\n}\n._gameWrapper_1luie_28 ._gameTable_1luie_35 ._row_1luie_54 ._selected_1luie_63 {\n  background: lightgray;\n}\n._gameWrapper_1luie_28 ._gameTable_1luie_35 ._row_1luie_54 ._isNew_1luie_66 {\n  color: red;\n}\n._gameWrapper_1luie_28 ._gameTable_1luie_35 ._row_1luie_54 ._cell_1luie_69 {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  flex-basis: 11.11111%;\n  position: relative;\n  border-right: 1px solid #bec6d4;\n  border-bottom: 1px solid #bec6d4;\n  box-sizing: border-box;\n  cursor: pointer;\n}\n._gameWrapper_1luie_28 ._gameTable_1luie_35 ._row_1luie_54 ._cell_1luie_69:nth-child(3n+4) {\n  border-left: 2px solid #344861;\n}";
+let json = {"margin-top":"_margin-top_1luie_1","flex":"_flex_1luie_5","possibleValues":"_possibleValues_1luie_8","input":"_input_1luie_17","buttonGroup":"_buttonGroup_1luie_20","gameWrapper":"_gameWrapper_1luie_28","gameTable":"_gameTable_1luie_35","row":"_row_1luie_54","selected":"_selected_1luie_63","isNew":"_isNew_1luie_66","cell":"_cell_1luie_69"};
+export default json;
+
+// [snowpack] add styles to the page (skip if no document exists)
+if (typeof document !== 'undefined') {
+  const styleEl = document.createElement("style");
+  const codeEl = document.createTextNode(code);
+  styleEl.type = 'text/css';
+
+  styleEl.appendChild(codeEl);
+  document.head.appendChild(styleEl);
+}

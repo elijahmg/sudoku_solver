@@ -1,0 +1,9 @@
+label {
+  display: flex;
+  margin-right: 2rem;
+  align-items: center;
+}
+label input {
+  margin-left: 2rem;
+  font-size: 2rem;
+}
