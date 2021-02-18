@@ -9,3 +9,5 @@ export const sudoku = [
   [0, 0, 1, 9, 0, 0, 7, 4, 0],
   [0, 3, 0, 0, 4, 0, 0, 9, 0],
 ];
+
+export const emptySudoku = new Array(9).fill(new Array(9).fill(0));

@@ -8,7 +8,7 @@
   .possibleValues {
     font-size: 2rem;
     margin-left: 4rem;
-    align-self: center;
+    align-self: flex-end;
 
     span {
       display: block;
@@ -17,6 +17,15 @@
 
     .input {
       margin-bottom: 2rem;
+    }
+
+    .buttonGroup {
+      display: flex;
+      flex-direction: column;
+
+      & > :not(:first-child) {
+        margin-top: 2rem;
+      }
     }
   }
 }

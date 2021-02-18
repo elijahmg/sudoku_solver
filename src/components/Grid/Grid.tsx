@@ -1,12 +1,13 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useReducer, useState } from 'react';
 import cx from 'classnames';
 
 import Button from '../Button/Button';
-import { sudoku as defaultS } from './util';
+import { emptySudoku, sudoku as defaultS } from './util';
 import Solver from '../../utils/solver';
 
 import styles from './Grid.module.scss';
 import Input from '../Input/Input';
+import { initialState, reducer, ActionType } from './state';
 
 type Coordinates = [number, number] | null;
 
@@ -17,6 +18,7 @@ type Coordinates = [number, number] | null;
  * 3. Take out button (done)
  * 4. TESTS!
  * 5. Improve functions in class with lodash
+ * 6. Redux-like state
  *
  * **/
 
@@ -24,47 +26,62 @@ interface Props {
   sudoku?: Array<Array<number>>;
 }
 
-const Grid: FC<Props> = ({ sudoku: propSudoku = defaultS }) => {
-  const [sudoku, setSudoku] = useState<Array<Array<number>>>(propSudoku);
-  const [selected, setSelected] = useState<Array<number> | null>();
-  const [possibleValues, setPossibleValues] = useState<Array<number>>();
+const Grid: FC<Props> = ({ sudoku: propSudoku = emptySudoku }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { possibleValues, copySudoku, isCustom, isValidSudoku, selected, sudoku } = state;
+
   const [delay, setDelay] = useState<number>(0);
 
-  const keyListener = (e: React.KeyboardEvent<HTMLTableDataCellElement>) => {
+
+  useEffect(() => {
+    document.addEventListener('keydown', keyListener);
+
+    return () => document.removeEventListener('keydown', keyListener);
+  }, [selected]);
+
+  const keyListener = (e: KeyboardEvent) => {
     const keyAsNumber = Number(e.key);
+
     if (Number.isInteger(keyAsNumber) && selected) {
-      if (sudoku[selected[0]][selected[1]] === 0) {
-        // @TODO stupid javascript :(
-        const copySud = JSON.parse(JSON.stringify(sudoku));
-        copySud[selected[0]][selected[1]] = keyAsNumber;
-        setSudoku(copySud);
-      }
+      // @TODO stupid javascript :(
+      const copySud = JSON.parse(JSON.stringify(sudoku));
+      copySud[selected![0]][selected![1]] = keyAsNumber;
+
+      dispatch({ type: ActionType.SET_SUDOKU, value: copySud });
     }
   };
 
   const isIntersection = (coord: Exclude<Coordinates, null>) => {
     if (selected) {
-      return coord.every((el, index) => el === selected[index]);
+      return coord.every((el, index) => el === selected![index]);
     }
 
     return false;
   };
 
   const solve = async () => {
+    dispatch({ type: ActionType.RESET_BEFORE_SOLVE });
+
     const solver = new Solver(sudoku, delay);
-    await solver.solve([0, 0], setSudoku, setPossibleValues, setSelected);
-    setSelected(null);
+
+    if (!solver.isValidSudoku()) {
+      dispatch({ type: ActionType.SET_IS_VALID_SUDOKU, value: true });
+    } else {
+      await solver.solve([0, 0], dispatch);
+      dispatch({ type: ActionType.SET_SELECTED, value: null });
+    }
   };
 
   const onReset = () => {
-    setSudoku(propSudoku);
-    setSelected(null);
-    setPossibleValues(undefined);
-  }
+    dispatch({ type: ActionType.FULL_RESET });
+  };
+
+  const onSetExample = () => {
+    dispatch({ type: ActionType.EXAMPLE_RESET });
+  };
 
   const onClick = (coord: Exclude<Coordinates, null>) => {
-    const newCoord = isIntersection(coord) ? null : coord;
-    // setSelected(newCoord);
+    dispatch({ type: ActionType.ON_CLICK, value: isIntersection(coord) ? null : coord });
   };
 
   return (
@@ -78,12 +95,11 @@ const Grid: FC<Props> = ({ sudoku: propSudoku = defaultS }) => {
                 <td
                   className={cx(styles.cell, {
                     [styles.selected]: isIntersection([i, j]),
-                    [styles.isNew]: defaultS[i][j] === 0,
+                    [styles.isNew]: copySudoku[i][j] === 0 && !isCustom,
                   })}
                   key={j}
                   onClick={() => onClick([i, j])}
                   tabIndex={0}
-                  onKeyDown={keyListener}
                 >
                   <div>{num || ''}</div>
                 </td>
@@ -94,6 +110,11 @@ const Grid: FC<Props> = ({ sudoku: propSudoku = defaultS }) => {
         </table>
       </div>
       <div className={styles.possibleValues}>
+        {isValidSudoku && <span style={{
+          color: 'red',
+        }}>Your sudoku is not valid</span>}
+        <span>Fill up your own sudoku or set example sudoku</span>
+        <span>Select cell by mouse and use numbers on keyboard</span>
         <span>Possible values: [{possibleValues?.join(', ')}]</span>
         <Input
           onChange={(value) => setDelay(Number(value))}
@@ -101,8 +122,11 @@ const Grid: FC<Props> = ({ sudoku: propSudoku = defaultS }) => {
           className={styles.input}
           type='number'
         >Delay, ms</Input>
-        <Button onClick={solve}>Solve sudoku</Button>
-        <Button onClick={onReset}>Reset</Button>
+        <div className={styles.buttonGroup}>
+          <Button onClick={solve}>Solve sudoku</Button>
+          <Button onClick={onReset}>Reset</Button>
+          <Button onClick={onSetExample}>Set example sudoku</Button>
+        </div>
       </div>
     </div>
   );

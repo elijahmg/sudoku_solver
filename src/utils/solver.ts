@@ -1,4 +1,9 @@
 import { intersection } from 'lodash';
+import type { Action } from '../components/Grid/state';
+import { ActionType } from '../components/Grid/state';
+
+type Dispatch = (action: Action) => void;
+
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -94,9 +99,7 @@ class Solver {
 
   async solve(
     indexes: Array<number>,
-    callback: (arr: Array<Array<number>>) => void,
-    setValues: (arr: Array<number>) => void,
-    setSelected: (arr: Array<number>) => void,
+    callback: Dispatch,
   ): Promise<boolean> {
     // @TODO make sleep configurable
     await sleep(this.delay);
@@ -108,19 +111,18 @@ class Solver {
       rowIndex = rowIndex + 1;
       columnIndex = 0;
     }
-    setSelected([rowIndex, columnIndex]);
+
+    callback({ type: ActionType.SET_SELECTED, value: [rowIndex, columnIndex] });
 
     if (this.sudoku[rowIndex][columnIndex] !== 0) {
       return await this.solve(
         [rowIndex, columnIndex + 1],
         callback,
-        setValues,
-        setSelected,
       );
     }
 
     const uniqValues = this.findPossibleValuesToSet([rowIndex, columnIndex]);
-    setValues(uniqValues);
+    callback({ type: ActionType.SET_POSSIBLE_VALUES, value: uniqValues });
 
     if (uniqValues.length === 0) return false;
 
@@ -132,8 +134,6 @@ class Solver {
           await this.solve(
             [rowIndex, columnIndex + 1],
             callback,
-            setValues,
-            setSelected,
           )
         ) {
           return true;
@@ -154,7 +154,7 @@ class Solver {
    */
   private update(
     indexes: Array<number>,
-    callback: (arr: Array<Array<number>>) => void,
+    callback: Dispatch,
     num: number,
   ) {
     const copySud = JSON.parse(JSON.stringify(this.sudoku));
@@ -163,7 +163,7 @@ class Solver {
     copySud[rowIndex][columnIndex] = num;
 
     this.sudoku = copySud;
-    callback(copySud);
+    callback({ type: ActionType.SET_SUDOKU, value: copySud });
   }
 
   /**
