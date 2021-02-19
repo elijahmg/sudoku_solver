@@ -1,12 +1,11 @@
 import React, {useEffect, useReducer, useState} from "../../../_snowpack/pkg/react.js";
 import cx from "../../../_snowpack/pkg/classnames.js";
 import Button from "../Button/Button.js";
-import {emptySudoku} from "./util.js";
 import Solver from "../../utils/solver.js";
 import styles from "./Grid.module.css.proxy.js";
 import Input from "../Input/Input.js";
 import {initialState, reducer, ActionType} from "./state.js";
-const Grid = ({sudoku: propSudoku = emptySudoku}) => {
+const Grid = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const {possibleValues, copySudoku, isCustom, isValidSudoku, selected, sudoku} = state;
   const [delay, setDelay] = useState(0);
@@ -16,10 +15,8 @@ const Grid = ({sudoku: propSudoku = emptySudoku}) => {
   }, [selected]);
   const keyListener = (e) => {
     const keyAsNumber = Number(e.key);
-    if (Number.isInteger(keyAsNumber) && selected) {
-      const copySud = JSON.parse(JSON.stringify(sudoku));
-      copySud[selected[0]][selected[1]] = keyAsNumber;
-      dispatch({type: ActionType.SET_SUDOKU, value: copySud});
+    if (Number.isInteger(keyAsNumber)) {
+      setNumber(keyAsNumber);
     }
   };
   const isIntersection = (coord) => {
@@ -47,6 +44,13 @@ const Grid = ({sudoku: propSudoku = emptySudoku}) => {
   const onClick = (coord) => {
     dispatch({type: ActionType.ON_CLICK, value: isIntersection(coord) ? null : coord});
   };
+  const setNumber = (num) => {
+    if (selected) {
+      const copySud = JSON.parse(JSON.stringify(sudoku));
+      copySud[selected[0]][selected[1]] = num;
+      dispatch({type: ActionType.SET_SUDOKU, value: copySud});
+    }
+  };
   return /* @__PURE__ */ React.createElement("div", {
     className: styles.flex
   }, /* @__PURE__ */ React.createElement("div", {
@@ -64,9 +68,17 @@ const Grid = ({sudoku: propSudoku = emptySudoku}) => {
     key: j,
     onClick: () => onClick([i, j]),
     tabIndex: 0
-  }, /* @__PURE__ */ React.createElement("div", null, num || "")))))))), /* @__PURE__ */ React.createElement("div", {
+  }, num || ""))))))), /* @__PURE__ */ React.createElement("div", {
     className: styles.possibleValues
-  }, isValidSudoku && /* @__PURE__ */ React.createElement("span", {
+  }, /* @__PURE__ */ React.createElement("table", {
+    className: styles.table
+  }, /* @__PURE__ */ React.createElement("tbody", null, /* @__PURE__ */ React.createElement("tr", {
+    className: styles.row
+  }, Array.from({length: 9}, (_, i) => i + 1).map((num) => /* @__PURE__ */ React.createElement("td", {
+    className: styles.cell,
+    key: num,
+    onClick: () => setNumber(num)
+  }, num))))), isValidSudoku && /* @__PURE__ */ React.createElement("span", {
     style: {
       color: "red"
     }

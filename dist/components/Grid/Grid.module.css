@@ -5,10 +5,23 @@
 .flex {
   display: flex;
 }
+@media only screen and (max-width: 600px) {
+  .flex {
+    flex-direction: column;
+  }
+}
 .flex .possibleValues {
   font-size: 2rem;
   margin-left: 4rem;
   align-self: flex-end;
+}
+@media only screen and (max-width: 600px) {
+  .flex .possibleValues {
+    margin-top: 2rem;
+    margin-left: 0;
+    align-self: self-start;
+    width: 100%;
+  }
 }
 .flex .possibleValues span {
   display: block;
@@ -25,9 +38,18 @@
   margin-top: 2rem;
 }
 
+.table {
+  background: #fff;
+  user-select: none;
+  border: 2px solid #344861;
+  font-size: 3rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
 .gameWrapper {
-  width: 500px;
-  height: 500px;
+  width: 50rem;
+  height: 50rem;
   background-color: #f3f6fa;
   position: relative;
   margin-top: 3rem;
@@ -51,22 +73,24 @@
   display: flex;
   flex-direction: column;
 }
-.gameWrapper .gameTable .row {
+.gameWrapper .gameTable .selected {
+  background: lightgray;
+}
+.gameWrapper .gameTable .isNew {
+  color: red;
+}
+
+.row {
   display: flex;
   padding: 0;
   margin: 0;
   height: 11.11111%;
 }
-.gameWrapper .gameTable .row:nth-child(3n) {
+.row:nth-child(3n) {
   border-bottom: 2px solid #344861;
 }
-.gameWrapper .gameTable .row .selected {
-  background: lightgray;
-}
-.gameWrapper .gameTable .row .isNew {
-  color: red;
-}
-.gameWrapper .gameTable .row .cell {
+
+.cell {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -77,6 +101,6 @@
   box-sizing: border-box;
   cursor: pointer;
 }
-.gameWrapper .gameTable .row .cell:nth-child(3n+4) {
+.cell:nth-child(3n+4) {
   border-left: 2px solid #344861;
 }

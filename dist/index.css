@@ -3,6 +3,21 @@ html {
   box-sizing: border-box;
   font-size: 62.5%;
 }
+@media only screen and (max-width: 768px) {
+  html {
+    font-size: 55%;
+  }
+}
+@media only screen and (max-width: 600px) {
+  html {
+    font-size: 50%;
+  }
+}
+@media only screen and (max-width: 450px) {
+  html {
+    font-size: 40%;
+  }
+}
 
 body {
   margin: 0;
