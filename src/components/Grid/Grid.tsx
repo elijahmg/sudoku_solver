@@ -2,7 +2,6 @@ import React, { FC, useEffect, useReducer, useState } from 'react';
 import cx from 'classnames';
 
 import Button from '../Button/Button';
-import { emptySudoku, sudoku as defaultS } from './util';
 import Solver from '../../utils/solver';
 
 import styles from './Grid.module.scss';
@@ -13,20 +12,11 @@ type Coordinates = [number, number] | null;
 
 /**
  * @TODO force user to fill up
- * 1. Checker is sudoku is solvable (done)
- * 2. Message in the end, sudoku is solved
- * 3. Take out button (done)
- * 4. TESTS!
- * 5. Improve functions in class with lodash
- * 6. Redux-like state
+ * 1. TESTS!
  *
  * **/
 
-interface Props {
-  sudoku?: Array<Array<number>>;
-}
-
-const Grid: FC<Props> = ({ sudoku: propSudoku = emptySudoku }) => {
+const Grid: FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { possibleValues, copySudoku, isCustom, isValidSudoku, selected, sudoku } = state;
 
@@ -42,12 +32,8 @@ const Grid: FC<Props> = ({ sudoku: propSudoku = emptySudoku }) => {
   const keyListener = (e: KeyboardEvent) => {
     const keyAsNumber = Number(e.key);
 
-    if (Number.isInteger(keyAsNumber) && selected) {
-      // @TODO stupid javascript :(
-      const copySud = JSON.parse(JSON.stringify(sudoku));
-      copySud[selected![0]][selected![1]] = keyAsNumber;
-
-      dispatch({ type: ActionType.SET_SUDOKU, value: copySud });
+    if (Number.isInteger(keyAsNumber)) {
+      setNumber(keyAsNumber);
     }
   };
 
@@ -84,6 +70,15 @@ const Grid: FC<Props> = ({ sudoku: propSudoku = emptySudoku }) => {
     dispatch({ type: ActionType.ON_CLICK, value: isIntersection(coord) ? null : coord });
   };
 
+  const setNumber = (num: number) => {
+    if (selected) {
+      const copySud = JSON.parse(JSON.stringify(sudoku));
+      copySud[selected![0]][selected![1]] = num;
+
+      dispatch({ type: ActionType.SET_SUDOKU, value: copySud });
+    }
+  }
+
   return (
     <div className={styles.flex}>
       <div className={styles.gameWrapper}>
@@ -101,7 +96,7 @@ const Grid: FC<Props> = ({ sudoku: propSudoku = emptySudoku }) => {
                   onClick={() => onClick([i, j])}
                   tabIndex={0}
                 >
-                  <div>{num || ''}</div>
+                  {num || ''}
                 </td>
               ))}
             </tr>
@@ -110,6 +105,17 @@ const Grid: FC<Props> = ({ sudoku: propSudoku = emptySudoku }) => {
         </table>
       </div>
       <div className={styles.possibleValues}>
+        <table className={styles.table}>
+          <tbody>
+          <tr className={styles.row}>
+            {Array.from({ length: 9 }, (_, i) => i + 1).map((num) => (
+              <td className={styles.cell} key={num} onClick={() => setNumber(num)}>
+                {num}
+              </td>
+            ))}
+          </tr>
+          </tbody>
+        </table>
         {isValidSudoku && <span style={{
           color: 'red',
         }}>Your sudoku is not valid</span>}
